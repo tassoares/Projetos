@@ -1,0 +1,25 @@
+{
+  "listaCursos": [
+    {
+      "id": "",
+      "nomeCurso": "dsadasd",
+      "dataInicio": "",
+      "dataTermino": "",
+      "status": ""
+    },
+    {
+      "id": "",
+      "nomeCurso": "",
+      "dataInicio": "",
+      "dataTermino": "",
+      "status": ""
+    },
+    {
+      "id": "",
+      "nomeCurso": "",
+      "dataInicio": "",
+      "dataTermino": "",
+      "status": ""
+    }
+  ]
+}
