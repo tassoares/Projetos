@@ -1,0 +1,181 @@
+<div class="container">
+  <h1>Lista de Cursos</h1>
+  <div class="search-input flex-center">
+    <label for="filtro">Filtrar por:</label>
+    <select
+      style="max-width: 180px; margin-bottom: 0"
+      class="form-select"
+      aria-label="Default select example"
+      id="filtro"
+      [(ngModel)]="selectedStatus"
+      (change)="filterCursos()"
+    >
+      <option value="todos">Todos</option>
+      <option value="agendado">Agendado</option>
+      <option value="andamento">Em andamento</option>
+      <option value="finalizado">Finalizado</option>
+    </select>
+    <label for="filtro-ano">Ano:</label>
+    <select
+      style="max-width: 180px; margin-bottom: 0"
+      class="form-select"
+      aria-label="Default select example"
+      id="filtro-ano"
+      (change)="filterCursos()"
+      [(ngModel)]="selectedYear"
+    >
+      <option value="todos">Todos</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+    </select>
+    <div class="flex-center">
+      <input
+        style="max-width: 90%; margin-bottom: 0"
+        class="form-control form-control-md"
+        type="text"
+        [(ngModel)]="textoPesquisa"
+        (change)="pesquisarCurso(textoPesquisa)"
+        type="text"
+        id="pesquisa"
+        placeholder="Pesquisar por nome"
+      />
+      <button class="btn btn-outline" type="submit">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th class="sort" (click)="sortCursos('id')">Número do Curso</th>
+        <th>Status</th>
+        <th class="sort" (click)="sortCursos('nomeCurso')">Nome do Curso</th>
+        <th>Datas</th>
+        <th>Editar</th>
+        <th>Excluir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let curso of listaCursos">
+        <td class="alturamin">{{ curso.id }}</td>
+        <td class="alturamin" style="cursor: pointer">
+          <i
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Agendado"
+            *ngIf="curso.status == 'agendado'"
+            class="bi bi-info-circle text-warning"
+          ></i>
+          <i
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Em Andamento"
+            *ngIf="curso.status == 'andamento'"
+            class="bi bi-skip-end-circle text-primary"
+          ></i>
+          <i
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Finalizado"
+            *ngIf="curso.status == 'finalizado'"
+            class="bi bi-check-circle text-success"
+          ></i>
+        </td>
+        <td class="alturamin">{{ curso.tituloEvento }}</td>
+        <td class="alturamin">
+          {{ curso.dataInicio | date : "dd/MM/yyyy" }} -
+          {{ curso.dataFim | date : "dd/MM/yyyy" }}
+        </td>
+        <td class="alturamin">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="idCursoSelecionado = curso.id; editando = true"
+          >
+            Editar
+          </button>
+        </td>
+        <td class="flex-center alturamin">
+          <a
+            href="#"
+            class="delete-link"
+            (click)="os.id = curso.id; deletando = true"
+            ><i class="bi bi-x-circle"></i
+          ></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="container">
+    <div class="add-course">
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-bs-toggle="button"
+        (click)="openAddModal()"
+      >
+        Adicionar Curso
+      </button>
+      <div
+        style="
+          width: 300px;
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+        "
+      >
+        <div class="column">
+          <i class="bi bi-info-circle text-warning"></i> Agendado
+        </div>
+        <div class="column">
+          <i class="bi bi-skip-end-circle text-primary"></i> Em Andamento
+        </div>
+        <div class="column">
+          <i class="bi bi-check-circle text-success"></i> Finalizado
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="carregando"
+  style="top: 50%; left: 50%; position: absolute"
+  class="spinner-border"
+  role="status"
+>
+  <span class="visually-hidden">Loading...</span>
+</div>
+
+<div id="add-modal" class="modal-overlay" *ngIf="modalVisivel">
+  <div class="modal-content">
+    <app-editar-curso-modal
+      (sinalizaReloadPage)="carregarDados()"
+      (fecharModal)="fecharModal()"
+      [isEditando]="false"
+    ></app-editar-curso-modal>
+  </div>
+</div>
+
+<div id="add-modal" class="modal-overlay" *ngIf="editando">
+  <div class="modal-content">
+    <app-editar-curso-modal
+      [isEditando]="true"
+      (fecharModal)="fecharModal()"
+      (sinalizaReloadPage)="carregarDados()"
+      [idCurso]="idCursoSelecionado"
+    ></app-editar-curso-modal>
+  </div>
+</div>
+
+<div id="add-modal" class="modal-overlay" *ngIf="deletando">
+  <div class="modal-content">
+    <h3>Tem certeza de que gostaria de excluir esse curso?</h3>
+    <button class="btn btn-primary" (click)="deletaCurso(os.id)">
+      Confirmar
+    </button>
+    <button class="btn btn-danger" (click)="deletando = false">Cancelar</button>
+  </div>
+</div>
